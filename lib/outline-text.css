@@ -1,0 +1,35 @@
+h1 {
+    --page-bg: #000;
+    --page-bg-rgb: 0,0,0;
+    --detail-color: #009c00;
+    --nav-color: #009c00;
+    --text-color: #efefef;
+    --text-color-rgb: 239,239,239;
+    font-family: 'Cabin', Trebuchet, 'Trebuchet MS', sans-serif;
+    text-rendering: optimizeLegibility;
+    margin: 1rem 0 .25em 0;
+    line-height: .8;
+    text-shadow: 0.02em 0.02em 0 var(--detail-color), -0.02em -0.02em 0 var(--detail-color), -0.02em 0.02em 0 var(--detail-color), 0.02em -0.02em 0 var(--detail-color), 0 0.02em 0 var(--detail-color), 0 -0.02em 0 var(--detail-color), -0.02em 0 0 var(--detail-color), 0.02em 0 0 var(--detail-color);
+    color: var(--page-bg);
+    overflow: auto;
+    padding: 1.7rem 0;
+    background: linear-gradient(to right, var(--page-bg) 30%, rgba(var(--page-bg-rgb), 0)),
+    			linear-gradient(to right, rgba(var(--page-bg-rgb), 0), var(--page-bg) 70%) 0 100%,
+    			radial-gradient(
+				  farthest-side at 0% 50%,
+				  rgba(var(--text-color-rgb), 0.5),
+				  rgba(var(--text-color-rgb), 0)
+				),
+				radial-gradient(
+				  farthest-side at 100% 50%,
+				  rgba(var(--text-color-rgb), 0.5),
+				  rgba(var(--text-color-rgb), 0)
+				)
+				0 100%;
+    background-repeat: no-repeat;
+    background-color: var(--page-bg);
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-position: 0 0, 100%, 0 0, 100%;
+    background-attachment: local, local, scroll, scroll;
+    font-size: 600%;
+}

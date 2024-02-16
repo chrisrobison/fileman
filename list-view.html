@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;500;700;900&family=Lexend+Deca:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/crblog/assets/fontawesome-free-6.4.0-web/css/all.min.css" />
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: "Lexend", "Helvetica Neue", "Helvetica", sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #e0e0e0;
+        }
+
+        header {
+            height: 2rem;
+            font-size: 18px;
+            font-weight: 300;
+            background-color: #ccc;
+            width:100%;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            flex-wrap:wrap;
+        }
+        main table {
+            font-family: "Inconsolata",monospace;
+        }
+        footer {
+            height: 0vh;
+        }
+
+        li {
+            display: flex;
+            flex-direction: row;
+            white-space: nowrap;
+        }
+        a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .fileinfo {
+            white-space: nowrap;
+            font-size: 0.8rem;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+        #size-slider {
+            position:fixed;
+            bottom: 0px;
+            right: 0px;
+            height: 2rem;
+            width: 10rem;
+            background: #fff;
+            border: 1px solid #0009;
+        }
+        div > span.label {
+            display: none;
+        }
+        .info {
+            display: flex;
+        }
+        .info > div {
+        }
+.info {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 80%;
+    font-size: 0.6rem;
+    font-weight: 200;
+}
+.metaicons {
+    position: absolute;
+    bottom: 0.25rem;
+    color: #ccc;
+    font-size: 0.7rem;
+    right: 0.25rem;
+transition: all 200ms linear;
+opacity: 0;
+}
+.file:hover .metaicons {
+opacity: 1;
+}
+.metaicons a {
+color: #ccc;
+}
+.selected {
+    background-color: #06c;
+    color: #eee;
+}
+.selected a {color: #eee; }
+.focus:after {
+    content: " ";
+    display: inline-block;
+    position: absolute;
+    top:0.25rem;
+    left: 0.25rem;
+    border: 2px dashed #ff0;
+    width: 7.1rem;
+    height: 8.1rem;
+    color: #eee;
+}
+.metaicons a:hover {
+    color: #0066ff;
+}
+.sndview {
+    width: 7rem;
+height: 2rem;
+}
+main table {
+    border-collapse: collapse;
+}
+main table td {
+    white-space: nowrap;
+}
+main table tr {
+}
+main table th {
+    background-color: #333;
+    color: #eee;
+    height: 2rem;
+}
+.value {
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+.modified {
+    width: 8rem;
+    text-align: right;
+}
+.file {
+    width: 10rem;
+}
+th.file {
+    text-align: left;
+    padding-left: 3rem;
+}
+.mimetype {
+    width: 10rem;
+    padding-left:1rem;
+}
+th.mimetype {
+    text-align: left;
+    padding-left:1rem;
+}
+th.modified {
+    text-align: center;
+}
+.owner {
+    width: 5rem;
+    text-align:center;
+}
+.group {
+    width: 5rem;
+    text-align:center;
+}
+.perms {
+    width: 8rem;
+}
+.size {
+    width: 5rem;
+    text-align: right;
+}
+th.size {
+    text-align: center;
+}
+.icon { 
+    width: 2rem;
+    text-align:center;
+}
+.rsorted:before {
+    content: "▼";
+    display: inline-block;
+}
+.sorted:before {
+    content: "▲";
+    display: inline-block;
+}
+main table tr:nth-child(2n) {
+background-color: #eee;
+}
+.reveal {
+    color: #999;
+ text-align:center;
+}
+    </style>
+    <script src="/crblog/assets/fontawesome-free-6.4.0-web/js/all.min.js"></script>
+</head>
+<body>
+<header>
+</header>
+<main>
+</main>
+<datalist id="markers">
+  <option value="16"></option>
+  <option value="32"></option>
+  <option value="64"></option>
+  <option value="128"></option>
+  <option value="256"></option>
+  <option value="512"></option>
+</datalist>
+
+<div id="size-slider">
+    <input list="markers" type="range" min="8" max="512" id="slider" name="slider" oninput="app.size(this.value)">
+</div>
+<script>
+const $ = str => document.querySelector(str);
+const $$ = str => document.querySelectorAll(str);
+
+(function() {
+    const app = {
+        data: {
+            files: {}
+        },
+        state: {
+            currentPath: "/",
+            selected: "",
+            focus: "",
+            loaded: false
+        },
+        init() {
+            document.addEventListener("click", app.doClick);
+            document.addEventListener("keydown", app.doKeyDown);
+            let query = app.parseQuery();
+            if (!query.f) query.f = '/';
+            app.state.currentPath = query.f;
+
+            fetch(`api?x=list&f=${query.f}`).then(r=>r.json()).then(data=>{
+                app.data.files[query.f] = data.files;
+                let html = app.render(data.files);
+                $("main").innerHTML = html;
+            });
+            $("header").innerHTML = `Path: ${query.f}`;
+            app.state.loaded = true;
+        },
+        parseQuery() {
+            let query = {};
+            location.search.substring(1).split(/&/).forEach(item=>{
+                let parts = item.split(/=/, 2);
+                query[parts[0]] = parts[1];
+            });
+            return query;
+        },
+        fetch(url, callback) {
+            fetch(url).then(response=>response.json()).then(data=>{
+                app.data = data;
+                app.state.loaded = true;
+                if (callback && typeof(callback) === "function") {
+                    callback(data);
+                }
+            });
+        },
+        doKeyDown(e) {
+            let move = 0;
+            switch(e.key) {
+                case "ArrowUp":
+                    console.log("Go Up");
+                    if (!app.selected) {
+                    }
+                    move = 1;
+                    break;
+                case "ArrowDown":
+                    console.log("Go Down");
+                    
+                    break;
+                case "ArrowLeft":
+                    console.log("Go left");
+                    break;
+                case "ArrowRight":
+                    console.log("Go right");
+                    break;
+
+                default:
+                    
+            }
+        },
+        doClick(e) {
+            if (e.target.tagName == "TH") {
+                app.doSort(e);
+                return false;
+            }
+            let sel = $(".selected");
+            let focus = $(".focus");
+            let tgt = e.target.closest(".file");
+            e.preventDefault();
+
+            if (tgt && !sel && !focus) {
+                tgt.classList.add("selected");
+                tgt.classList.add("focus");
+
+            }
+            return false;       
+        },
+        size(sz) {
+            const stylesheet = document.styleSheets[0];
+
+            Object.values(stylesheet.cssRules).forEach((block) => {
+              if (block.selectorText === "button") {
+                block.styleMap.set("--mainColor", "black");
+              }
+            });
+        },
+        cleanSize(amt) {
+            let out;
+            if (amt > 1000000000) {
+                return( Math.floor(amt / 100000000) / 10 + 'GB' );
+            } else if (amt > 1000000) {
+                return( Math.floor(amt / 100000) / 10 + 'MB' );
+            } else if (amt > 1000) {
+                return( Math.floor(amt / 100) / 10 + 'KB' );
+            } else {
+                return amt + ' bytes';
+            } 
+        },
+        cleanDate(when, long=false) {
+            let mos = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            let now = new Date(when * 1000);
+            let hr = now.getHours();
+            let min = now.getMinutes();
+            if (min < 10) min = "0" + min;
+            let xm = (hr >= 12) ? "pm" : "am";
+            hr = (hr >= 12) ? hr - 12 : hr;
+            let out = '';
+
+            if (long) {
+                out = `${mos[now.getMonth()].substring(0, 3)}. ${now.getDay()}, ${now.getFullYear()} ${hr}:${min}${xm}`;
+            } else {
+                out = `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()} ${hr}:${min}${xm}`;
+            }
+            return out;
+        },
+        doSort(evt) {
+            let col = evt.target.id;
+            console.log(col);
+
+            if (!app.state[col]) app.state[col] = 1;
+            app.state[col] ^= 1;
+
+            let sorted = app.sortBy(app.data.files, col, app.state[col]);
+            app.render(sorted, $("main"), col);
+        },
+        sortBy(data, key, desc) {
+            data.sort((a, b) => {
+                const nameA = a[key].toUpperCase();
+                const nameB = b[key].toUpperCase();
+                if (nameA < nameB) {
+                    return -1;
+                } 
+                if (nameA > nameB) {
+                    return 1;
+                }
+                return 0;
+            });
+            if (desc) {
+                data.reverse();
+            }
+            return data;
+        },
+        opendir(evt, path) {
+            let tgtid = path.replace(/\W/g, '_');
+            let tgt = $(`#${tgtid}_children`);
+            let tgtrow = $(`.${tgtid}_children`);
+            
+            if (tgtrow) {
+                tgtrow.classList.toggle('expanded');
+            }
+            
+            
+            fetch("api?x=list&f="+path).then(r=>r.json()).then(data=>{
+                app.data.files[path]  = data.files;
+                if (tgtrow) {
+                    tgtrow.classList.toggle('expanded');
+                }
+                if (!tgt) {
+                    let newrow = document.createElement("tr");
+                    tgt = document.createElement("td");
+                    tgt.setAttribute("colspan", 7);
+                    tgt.id = `${tgtid}_children`;
+                }                    
+                parts = tgtid.split(/_/);
+                let childlevel = parts.length - 1;
+
+                app.render(data.files, tgt, 'file', true, childlevel);
+            });
+        },
+        render(data, tgt, sortKey, noheadings=false, childlevel=0) {
+            const keys = ['file','modified','mimetype','owner','group','perms','size'];
+
+            let out = `<table style='position:relative;left:${childlevel * 35}px;'>`;
+            if (!noheadings) {
+                out += "<thead><tr><th class='reveal'></th><th class='icon'></th>";
+                keys.forEach(key => {
+                    let sortby = '';
+                    if (sortKey==key) {
+                        if (app.state[key] > 0) {
+                            sortby = ' sortby';
+                        } else if (app.state[key] < 0) {
+                            sortby = ' rsortby';
+                        } else {
+                            sortby = '';
+                        }
+                    }
+                    out += `<th id="${key}" class="${key}${sortby}">${key.charAt(0).toUpperCase() + key.slice(1)}</th>`;
+                });
+                
+                out += "</tr></thead>";
+            }
+            out += "<tbody>";
+            data.forEach(item=>{
+                let reveal = (item.isdir) ? `<a href='#${item.filename}' onclick="app.opendir(event, '${item.filename}');return false;">▶</a>` : "";
+                out += `<tr id="${item.filename.replace(/\W/g, '_')}"><td class="reveal">${reveal}</td><td class="icon"><img src="${item.icon}" style="height:24px;width:24px"></td>`;
+
+                keys.forEach((key, idx) => {
+                    let show = item[key];
+                    if (key=="modified") {
+                        show = app.cleanDate(item[key]);
+                    }
+                    if (key == "size") {
+                        show = app.cleanSize(item[key]);
+                    }
+                    out += `<td class="${key}"><div class="${key} value">${show}</div></td>`;
+                });
+                out += `</tr>`;
+                if (item.isdir) {
+                    out += `<tr class="${item.filename.replace(/\W/g, '_')}_children"><td id="${item.filename.replace(/\W/g, '_')}_children" colspan="9"></td></tr>`;
+                }
+            });
+            out += "</tbody></table>";
+
+            if (tgt) {
+                tgt.innerHTML = out;
+            }
+            return out;
+        },
+    }
+    window.app = app;
+    app.init();
+})();
+</script>
+</body>
+</html>

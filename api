@@ -1,0 +1,280 @@
+<?php
+$in = $_REQUEST;
+
+// Config
+$basepath = "/home/cdr/domains/cdr2.com/www";
+$folderico = "img/folder.svg";
+$mimeico = "/img/mimetypes";
+
+$out = new stdClass();  // object placeholder for return data
+if (!isset($in['f'])) $in['f'] = "/";        // Defaults to top level
+if (!isset($in['x'])) $in['x'] = "list";    // Defaults to listings
+
+if (isset($in['basepath'])) {
+    $basepath = $in['basepath'];
+}
+$myfile = $basepath . $in['f'];
+
+switch ($in['x']) {
+    case "info":
+        $out = getInfo($in['f']);
+        break;
+    case "list":
+        $out = listFiles($in['f']);
+        break;
+    case "get":
+        if (is_dir($myfile)) {
+            $out = listFiles($in['f']);
+        } else {
+            $out = getContent($in['f']);
+        }
+        break;
+    case "sites":
+        $out = listSites("/home/cdr/domains/");
+        break;
+    case "folderSize":
+        $out = getFolderSize($in['f']);
+        break;
+    default:
+        $out = listFiles($in['f']);
+}
+
+header("Content-Type: application/javascript");
+print json_encode($out, JSON_UNESCAPED_SLASHES);
+
+function listSites($path="/home/cdr/domains/") {
+    if (!preg_match("/\/$/", $path)) $path .= "/";
+
+    $tmpsites = glob($path . "*");
+    $sites = array();
+    for ($i=0; $i<count($tmpsites); $i++) {
+        $domain = $tmpsites[$i];
+        if (is_dir($domain)) {
+            $site = new stdClass();
+            $site->domain = preg_replace("|".$path."|", '', $domain);
+            $site->fullpath = $domain.'/www';
+            $site->path = "/domains/".$site->domain.'/www';
+            $site->icon = (file_exists($site->path . '/favicon.ico')) ? $site->path . '/favicon.ico' : 'img/globe.svg';
+            $site->perms = getPerms($fullpath);
+            $site->owner = posix_getpwuid(fileowner($fullpath));
+            $site->group = posix_getgrgid(filegroup($fullpath));
+            $site->stat = stat($fullpath);
+            $site->modified = filemtime($fullpath);
+            $site->isdir = true;
+
+            $sites[] = $site;
+        }
+    }
+    return $sites;
+}
+
+function getInfo($file) {
+    global $mimeico;
+    global $basepath;
+    $fullpath = $basepath . $file;
+
+    $out = new stdClass();
+    $out->filename = $file;
+    $out->size = filesize($fullpath);
+    $out->owner = posix_getpwuid(fileowner($fullpath));
+    $out->group = posix_getgrgid(filegroup($fullpath));
+    $out->perms = getPerms($fullpath);
+    $out->modified = filemtime($fullpath);
+    $out->mimetype = mime_content_type($fullpath);
+    $out->file = basename($file); 
+    $out->stat = stat($fullpath);
+    $out->cleanfile = preg_replace("/\W/", "_", $fullpath);
+    $out->fullpath = $fullpath;
+    $ico = preg_replace("/\//", '-', $out->mimetype);
+    
+    if (preg_match("/\.(\w+)$/", $file, $matches)) {
+        $ext = $matches[1];
+    }
+    if (is_dir($file)) {
+        $out->icon = $folderico;
+        $out->isdir = true;
+    } else if (preg_match("/(png|jpg|gif|svg|jpeg)$/", $out->filename)) { 
+        $out->icon = $out->filename;
+
+    } else if (file_exists("$basepath/fileman/img/$ext.svg")) {
+        $out->icon = "img/$ext.svg";
+    } else if (file_exists("img/$ext.png")) {
+        $out->icon = "img/$ext.png";
+    } else if (file_exists("$basepath$mimeico/$ico.png")) {
+        $out->icon = "$mimeico/$ico.png";
+    } else if (file_exists("$basepath$mimeico/".preg_replace("/\-.*/", '', $ico).".png")) {
+        $out->icon = "$mimeico/".preg_replace("/\-.*/", '', $ico).".png";
+    } else {
+        $out->icon = "$mimeico/text.png#$ico";
+    }
+    
+    /*
+    if (preg_match("/\.(html)$/", $file)) {
+        if (!file_exists($basepath."/.cache".$out->cleanfile.".png")) {
+            $result = `wkhtmltoimage https://cdr2.com{$out->filename} .cache/{$out->cleanfile}.png`;
+        } 
+        $out->icon = "/fileman/.cache/".$out->cleanfile.".png";
+    }
+    */
+    return $out;
+}
+
+function listFiles($folder) {
+    global $basepath;
+    global $in;
+    global $mimeico;
+    global $folderico;
+    
+    if (!preg_match("|/home/cdr|", $basepath.$folder)) {
+        $folder = preg_replace("|//|", "/", "/home/cdr/".$folder);
+    }
+    $out = new stdClass();
+    $usepath = $basepath.$folder;
+    if (file_exists($folder)) {
+        $usepath = $folder;
+    } else if (file_exists($basepath . $folder)) {
+        $usepath = $basepath . $folder;
+    }
+    if (is_dir($usepath)) {
+        if ($usepath == "/") {
+            $usepath = "/home/cdr/domains/cdr2.com/www";
+        }
+        $files = glob($usepath."/*");
+        $out->files = array();
+        for ($i=0; $i<count($files); $i++) {
+            $file = $files[$i];
+
+            $out->files[$i] = new stdClass();
+            $out->files[$i]->filename = preg_replace("/\/\//", "/", preg_replace("|$basepath|", '', $files[$i]));
+            $out->files[$i]->file = preg_replace("|.+/|", '', $files[$i]);
+            $isdir = is_dir($files[$i]);
+            $files[$i] = escapeshellarg($files[$i]);
+            $out->files[$i]->mimetype = trim(`file -b --mime-type {$files[$i]}`);
+            $out->files[$i]->isdir = false;
+            $out->files[$i]->perms = getPerms($file);
+            $out->files[$i]->modified = filemtime($file);
+            $owner = posix_getpwuid(fileowner($file));
+            $out->files[$i]->owner = $owner['name'];
+            $group = posix_getgrgid(filegroup($file));
+            $out->files[$i]->group = $group['name'];
+
+            $out->files[$i]->size = filesize($file);
+            $ico = preg_replace("/\//", '-', $out->files[$i]->mimetype);
+
+            if (preg_match("/\.(\w+)$/", $file, $matches)) {
+                $ext = $matches[1];
+            }
+            
+            if (is_dir($file)) {
+                $out->files[$i]->icon = $folderico;
+                $out->files[$i]->isdir = true;
+            } else if (preg_match("/(png|jpg|gif|svg|jpeg)$/", $out->files[$i]->filename)) { 
+                $out->files[$i]->icon = $out->files[$i]->filename;
+
+            } else if (file_exists("$basepath/fileman/img/$ext.svg")) {
+                $out->files[$i]->icon = "img/$ext.svg";
+            } else if (file_exists("img/$ext.png")) {
+                $out->files[$i]->icon = "img/$ext.png";
+            } else if (file_exists("$basepath$mimeico/$ico.png")) {
+                $out->files[$i]->icon = "$mimeico/$ico.png";
+            } else if (file_exists("$basepath$mimeico/".preg_replace("/\-.*/", '', $ico).".png")) {
+                $out->files[$i]->icon = "$mimeico/".preg_replace("/\-.*/", '', $ico).".png";
+            } else {
+                $out->files[$i]->icon = "$mimeico/text.png#$ico";
+            }
+        }
+    } else {
+        $out = getContent($folder);
+    }
+    return $out;
+}
+function getContent($file) {
+    global $in;
+    global $basepath;
+
+    $out = new stdClass();
+    if (file_exists($basepath.$file)) {
+        $mimetype = `file -b --mime-type {$basepath}{$file}`;
+        if (preg_match("/image/", $mimetype)) {
+            $out->content = "<img src='/crblog".$file."'>";
+            $out->type = "text/html";
+        } else {
+            $out->type = $mimetype;
+            $out->content = file_get_contents($basepath.$file);
+            if (preg_match("/\.html|\.php/", $file)) {
+                $out->content = "<base href='{$basepath}{$file}'>".$out->content;
+            }
+        }
+    }
+
+}
+
+function getFolderSize($path) {
+    $path = escapeshellarg($path);
+    $results = `du -abc $path`;
+    $filelist = preg_split("/\n/", $results);
+    array_splice($filelist, count($filelist) - 1, 1);
+
+    $total = array_pop($filelist);
+    $p = preg_split("/\s+/", $total, 2);
+    
+    $out = new stdClass();
+    $out->size = $p[0];
+    print_r($out);
+    return $out;
+}
+
+function getPerms($file) {
+$perms = fileperms($file);
+/*
+switch ($perms & 0xF000) {
+    case 0xC000: // socket
+        $info = 's';
+        break;
+    case 0xA000: // symbolic link
+        $info = 'l';
+        break;
+    case 0x8000: // regular
+        $info = 'r';
+        break;
+    case 0x6000: // block special
+        $info = 'b';
+        break;
+    case 0x4000: // directory
+        $info = 'd';
+        break;
+    case 0x2000: // character special
+        $info = 'c';
+        break;
+    case 0x1000: // FIFO pipe
+        $info = 'p';
+        break;
+    default: // unknown
+        $info = 'u';
+}
+ */
+$info = "";
+// Owner
+$info .= (($perms & 0x0100) ? 'r' : '-');
+$info .= (($perms & 0x0080) ? 'w' : '-');
+$info .= (($perms & 0x0040) ?
+            (($perms & 0x0800) ? 's' : 'x' ) :
+            (($perms & 0x0800) ? 'S' : '-'));
+
+// Group
+$info .= (($perms & 0x0020) ? 'r' : '-');
+$info .= (($perms & 0x0010) ? 'w' : '-');
+$info .= (($perms & 0x0008) ?
+            (($perms & 0x0400) ? 's' : 'x' ) :
+            (($perms & 0x0400) ? 'S' : '-'));
+
+// World
+$info .= (($perms & 0x0004) ? 'r' : '-');
+$info .= (($perms & 0x0002) ? 'w' : '-');
+$info .= (($perms & 0x0001) ?
+            (($perms & 0x0200) ? 't' : 'x' ) :
+            (($perms & 0x0200) ? 'T' : '-'));
+
+return $info;
+}
+?>

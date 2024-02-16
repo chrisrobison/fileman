@@ -1,0 +1,64 @@
+<div class="toolbar">
+    <img class="logo" src="img/crlogo.svg">
+    <div class="toolgroup">
+        <input type="text" id="search" placeholder="Search Files..."> <button title="Search" class="btn btn-search"></button>
+    </div>
+    <div class="buttongroup">
+        <div class="toolgroup">
+            <button title="New Folder" class="btn new-folder"></button><button title="Compress File[s]" class="btn btn-compress"></button><button title="Copy" class="btn btn-copy"></button><button title="Paste" class="btn btn-paste"></button><button title="Upload" class="btn btn-upload"></button><button title="Download" class="btn btn-download"></button><button title="Delete" class="btn btn-trash"></button>
+        </div>
+        <div class="toolgroup">
+            <button id="icon-view" title="Icon View" class="view-icon view selected"></button><button title="List View" id="list-view" class="view-list view"></button><button title="Column View" id="column-view" class="view-column view"></button>
+        </div>
+    </div>
+</div>
+<script>
+
+(function() {
+    const $ = str => document.querySelector(str);
+    const $$ = str => document.querySelectorAll(str);
+    const app = {
+        config: {
+            view: "icon-view"
+        },
+        data: {},
+        state: {
+            folders: {},
+            loaded: false
+        },
+        init: function() {
+            $$(".buttongroup button").forEach(btn=>{
+                btn.addEventListener("click", app.toolbarAction);
+            });
+
+            app.state.loaded = true;
+        },
+        toolbarAction(evt) {
+            let tgt = evt.target;
+            let what, action, m;
+            
+            if (m = tgt.className.match(/(view|btn)\-(.*)/)) {
+                what = m[1];
+                action = m[2];
+            }
+
+            if (m = evt.target.id.match(/(\w+)\-view/)) {
+                app.config.view = m[1];
+                $("#viewer").src = evt.target.id + '.php';
+                app.storeConfig("view", m[1]);
+            }
+        },
+        storeConfig(key, val) {
+            localStorage.set(key, JSON.stringify(val));
+        },
+        getConfig(key) {
+            return JSON.parse(localStorage.getItem(key));
+        }
+    }
+    window.app = app;
+    app.init();
+})();
+</script>
+</body>
+
+</html>

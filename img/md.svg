@@ -1,0 +1,41 @@
+<svg viewBox="3.826 2.059 46.243 49.441" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <filter id="blur" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <title>Blur</title>
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.01"></feGaussianBlur>
+    </filter>
+    <filter id="blur2" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.03 0.05"></feGaussianBlur>
+    </filter>
+  </defs>
+  <path style="stroke: rgb(0, 0, 0); fill: rgb(240, 240, 240); stroke-width: 0.5px;" d="M 3.826 2.059 L 4.078 51.5 L 44.81 51.5 L 44.81 9.897 L 37.813 2.126 L 3.826 2.059 Z">
+    <title>Paper</title>
+  </path>
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0.4px; fill: rgb(204, 204, 204);" d="M 37.654 2.099 L 37.674 9.895 L 44.81 9.871 L 37.654 2.099 Z">
+    <title>Fold</title>
+  </path>
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0px; transform-box: fill-box; transform-origin: 50% 50%; fill: rgba(0, 0, 0, 0.365);" d="M 37.654 9.895 L 37.675 17.299 L 45.054 17.277 L 37.654 9.895 Z" transform="matrix(-1, 0, 0, -1, 0.000004, 0)">
+    <title>Fold Shadow</title>
+  </path>
+  <g style="visibility: hidden;">
+    <title>Perforation</title>
+    <line style="stroke: rgb(185, 185, 185); stroke-dasharray: 1, 2;" x1="7.306" y1="5.644" x2="7.033" y2="48.906">
+      <title>Perforation Left</title>
+    </line>
+    <line style="stroke: rgb(172, 172, 172); stroke-dasharray: 1, 2;" x1="41.927" y1="12.188" x2="41.654" y2="51.353">
+      <title>Perforation Right</title>
+    </line>
+  </g>
+  <text style="fill: rgb(134, 134, 134); font-family: Arial, sans-serif; font-size: 2.8px; font-weight: 900; white-space: pre; visibility: hidden;" x="11.029" y="12.048" filter="url(#blur2)"><title>Title</title>The Crazy Ones</text>
+  <g transform="matrix(1.047387, 0, 0, 1, 0.829241, 7.273002)">
+    <title>Filetype</title>
+    <rect x="26.016" y="33.594" width="20.996" height="10.486" style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill-opacity: 0.57;" filter="url(#blur2)">
+      <title>Filetype Shadow</title>
+    </rect>
+    <rect x="26.016" y="32.594" width="20.041" height="10.486" style="fill: rgb(18, 126, 0); stroke: rgb(57, 57, 57); stroke-width: 0px;">
+      <title>Filetype</title>
+    </rect>
+    <text style="fill: rgb(238, 238, 238); font-family: Tahoma; font-size: 8px; font-weight: 700; white-space: pre;" x="29.847" y="41.079">MD</text>
+  </g>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 1px; white-space: pre;" filter="url(#blur)"><tspan x="10.468" y="10.979">An h1 header</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>============</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>Paragraphs are separated by a blank line.</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>2nd paragraph. *Italic*, **bold**, and `monospace`. Itemized lists</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>look like:</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>  * this one</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>  * that one</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>  * the other one</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>Note that --- not considering the asterisk --- the actual text</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>content starts at 4-columns in.</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>&gt; Block quotes are</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>&gt; written like so.</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>&gt;</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>&gt; They can span multiple paragraphs,</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>&gt; if you like.</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>Use 3 dashes for an em-dash. Use 2 dashes for ranges (ex., "it's all</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>in chapters 12--14"). Three dots ... will be converted to an ellipsis.</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>Unicode is supported. ☺</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>An h2 header</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>------------</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan>Here's a numbered list:</tspan><tspan x="10.468" dy="1em">​</tspan><tspan x="10.468" dy="1em">​</tspan><tspan> 1. first item</tspan><tspan x="10.468" dy="1em">​</tspan><tspan> 2. second item</tspan><tspan x="10.468" dy="1em">​</tspan><tspan> 3. third item</tspan><tspan x="10.468" dy="1em">​</tspan></text>
+</svg>

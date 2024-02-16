@@ -1,0 +1,20 @@
+<svg viewBox="3.826 2.059 40.984 49.441" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <filter id="blur" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <title>Blur</title>
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.01"></feGaussianBlur>
+    </filter>
+    <filter id="blur2" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.03"></feGaussianBlur>
+    </filter>
+    <bx:grid x="0" y="0" width="48.059" height="54.587"></bx:grid>
+  </defs>
+  <path style="stroke: rgb(0, 0, 0); fill: rgb(240, 240, 240);" d="M 3.826 2.059 L 4.078 51.5 L 44.81 51.5 L 44.81 9.897 L 37.813 2.126 L 3.826 2.059 Z">
+    <title>Paper</title>
+  </path>
+  <line style="stroke: rgb(185, 185, 185); stroke-dasharray: 1, 2;" x1="7.306" y1="5.644" x2="7.033" y2="48.906"></line>
+  <line style="stroke: rgb(172, 172, 172); stroke-dasharray: 1, 2;" x1="41.927" y1="6.188" x2="41.654" y2="51.353"></line>
+  <path style="stroke: rgb(0, 0, 0); fill: rgb(248, 248, 248); stroke-linejoin: round; stroke-linecap: round;" d="M 37.654 2.099 L 37.674 9.895 L 44.81 9.871 L 37.654 2.099 Z"></path>
+  <text style="font-family: Arial, sans-serif; font-size: 1.75px; white-space: pre;" filter="url(#blur)"><tspan x="11.081" y="16.787">Here’s to the crazy ones, the misfits, </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>the rebels, the troublemakers, the </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>round pegs in the square holes… </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>the ones who see things differently </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>— they’re not fond of rules… </tspan><tspan x="11.081" dy="1em">​</tspan><tspan x="11.081" dy="1em">​</tspan><tspan>You can quote them, disagree with </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>them, glorify or vilify them, but the </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>only thing you can’t do is ignore </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>them because they change things… </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>they push the human race forward, </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>and while some may see them as </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>the crazy ones, we see genius, </tspan><tspan x="11.081" dy="1em">​</tspan><tspan x="11.081" dy="1em">​</tspan><tspan>because the ones who are crazy </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>enough to think that they can change </tspan><tspan x="11.081" dy="1em">​</tspan><tspan>the world, are the ones who do.</tspan></text>
+  <text style="fill: rgb(134, 134, 134); font-family: Arial, sans-serif; font-size: 2.8px; font-weight: 900; white-space: pre;" x="11.029" y="12.048" filter="url(#blur2)">The Crazy Ones</text>
+</svg>

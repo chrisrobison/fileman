@@ -1,0 +1,41 @@
+<svg viewBox="3.826 2.059 48.103 57.581" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <filter id="blur" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <title>Blur</title>
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.01"></feGaussianBlur>
+    </filter>
+    <filter id="blur2" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.03"></feGaussianBlur>
+    </filter>
+  </defs>
+  <path style="stroke: rgb(0, 0, 0); fill: rgb(240, 240, 240); stroke-width: 0.5px;" d="M 3.826 2.059 L 4.103 56.64 L 48.929 56.64 L 48.929 10.712 L 41.229 2.133 L 3.826 2.059 Z">
+    <title>Paper</title>
+  </path>
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0.4px; fill: rgb(204, 204, 204);" d="M 41.758 2.099 L 41.778 9.895 L 48.914 9.871 L 41.758 2.099 Z">
+    <title>Fold</title>
+  </path>
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0px; fill: rgba(0, 0, 0, 0.365); transform-box: fill-box; transform-origin: 50% 50%;" d="M 41.514 9.895 L 41.535 17.299 L 48.914 17.277 L 41.514 9.895 Z" transform="matrix(-1, 0, 0, -1, 0.000005, -0.000001)">
+    <title>Fold Shadow</title>
+  </path>
+  <g style="visibility: hidden;">
+    <title>Perforation</title>
+    <line style="stroke: rgb(185, 185, 185); stroke-dasharray: 1, 2;" x1="7.306" y1="5.644" x2="7.033" y2="48.906">
+      <title>Perforation Left</title>
+    </line>
+    <line style="stroke: rgb(172, 172, 172); stroke-dasharray: 1, 2;" x1="41.927" y1="12.188" x2="41.654" y2="51.353">
+      <title>Perforation Right</title>
+    </line>
+  </g>
+  <text style="fill: rgb(134, 134, 134); font-family: Arial, sans-serif; font-size: 2.8px; font-weight: 900; white-space: pre; visibility: hidden;" x="11.029" y="12.048" filter="url(#blur2)"><title>Title</title>The Crazy Ones</text>
+  <text style="font-family: 'Lucida Console'; font-size: 2px; white-space: pre; filter: url('#blur');" transform="matrix(1, 0, 0, 1, 0, -8.999996)"><tspan x="11.081" y="16.787">&lt;body&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>&lt;header&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>  &lt;img class="logo" src</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>  &lt;button class="new-fol</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>  &lt;div class="toolgroup"&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>    &lt;button&gt;&gt;id="icon&lt;vi&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>    &lt;lumn-view view"&gt;&lt;/&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>  &lt;/div&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>&lt;/header&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>&lt;main&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>  &lt;div id="left"&gt;&lt;/div&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>  &lt;div id="handle"&gt;‖&lt;/div&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>  &lt;div id="right"&gt;&lt;/div&gt;</tspan><tspan x="11.081000328063965" dy="1em">​</tspan><tspan>&lt;/main&gt;<tspan x="11.081000328063965" dy="1em">​</tspan>&lt;ul&gt;<tspan x="11.081000328063965" dy="1em">​</tspan>  &lt;li&gt;Item 1&lt;/li&gt;<tspan x="11.081000328063965" dy="1em">​</tspan>  &lt;li&gt;Item 2&lt;/li&gt;<tspan x="11.081000328063965" dy="1em">​</tspan>  &lt;li&gt;Item 3&lt;/li&gt;<tspan x="11.081000328063965" dy="1em">​</tspan>&lt;/ul&gt;<tspan x="11.081000328063965" dy="1em">​</tspan>&lt;/body&gt;</tspan></text>
+  <g transform="matrix(1.681603, 0, 0, 1.25714, -35.981885, 4.225275)" style="">
+    <title>Filetype</title>
+    <rect x="36.21" y="33.594" width="16.068" height="10.486" style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgba(0, 0, 0, 0.357);" filter="url(#blur2)">
+      <title>Filetype Shadow</title>
+    </rect>
+    <rect x="35.615" y="32.594" width="16.068" height="10.486" style="stroke-width: 0.3px; fill: color(display-p3 0.63 0 0); stroke: rgb(182, 0, 0);">
+      <title>Filetype</title>
+    </rect>
+    <text style="fill: rgb(238, 238, 238); font-family: Tahoma; font-size: 9px; white-space: pre;" x="31.873" y="41.079" transform="matrix(0.898426, 0, 0, 1, 11.204841, 0.137088)">JS</text>
+  </g>
+</svg>
