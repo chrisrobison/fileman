@@ -420,6 +420,25 @@ margin-left: 4px;
         #search input {
             width: 100%;
             font-size: 18px;
+            border: 0px solid #fff;
+            border-right: 0px solid #fff;
+            border-radius: 1rem;
+        }
+        .query-close {
+            border: 0px solid #fff;
+            background: transparent;
+            color: #aaa;
+            position: relative;
+            left: -1.5rem;
+        }
+        #search button, #search button:focus-visible, #search input:focus, #search input:focus-visible, #search input:focus-within {
+            border: 0px solid #000;
+            outline: 0px;
+        }
+        #search input:focus-visible {
+            border: 2px solid #000;
+        }
+        #search button:focus-visible {
         }
     </style>
     <script src="/crblog/assets/fontawesome-free-6.4.0-web/js/all.min.js"></script>
@@ -454,7 +473,7 @@ margin-left: 4px;
     <div id="qv-resize-right" class="qv-resize"></div>
     <div id="qv-resize-bottom-left" class="qv-resize qv-resize-corner"></div><div id="qv-resize-bottom" class="qv-resize"></div><div id="qv-resize-bottom-right" class="qv-resize qv-resize-corner"></div>
 </div>
-<div id="search"><input type="text" id="query" name="query" value=""></div>
+<div id="search"><input type="text" id="query" name="query" oninput="app.doSearch(this.value)" value=""><button class="query-close" onclick="app.clearSearch();return false;"><i class="fa-solid fa-xmark"></i></button></div>
 <script>
 const $ = str => document.querySelector(str);
 const $$ = str => document.querySelectorAll(str);
@@ -541,6 +560,31 @@ const $$ = str => document.querySelectorAll(str);
             $("#viewer").classList.remove("show");
             app.state.quickviewing = false;
             app.hideOverlay();
+        },
+        clearSearch() {
+            $("#query").value = "";
+            let foc = $(".focus");
+            $$(`ul#col${colnum} li`).forEach(file => {
+                file.style.display = "flex";
+            });
+        },
+        doSearch(val) {
+            let foc = $(".focus");
+            let sel = $(".selected");
+
+            if (foc) {
+                let colnum = app.getCol(foc);
+                let re = new RegExp(val, "i");
+
+                $$(`ul#col${colnum} li`).forEach(file => {
+                    console.log(`Checking file ${file.dataset.filename} for string '${val}'`);
+                    if (!file.dataset.filename.match(re)) {
+                        file.style.display = "none";
+                    } else {
+                        file.style.display = "flex";
+                    }
+                });
+            }
         },
         getCol(el) {
             if (el) {
@@ -653,7 +697,7 @@ const $$ = str => document.querySelectorAll(str);
                         let search = $("#search");
                         let col = foc.closest(".column");
                         col.append(search);
-                        search.style.display = "block";
+                        search.style.display = "flex";
                         $("#query").focus();
                         e.preventDefault();
                         e.stopPropagation();
