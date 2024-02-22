@@ -79,6 +79,7 @@
             border: 1px dashed #fff0;
         }
         img.icon {
+            width: 24px;
             height: 24px;
         }
         img.folder {
@@ -323,8 +324,9 @@
             });
             $("#left").addEventListener("click", app.doClick);
             $("#handle").addEventListener("mousedown", app.doDown);
-            fetch("api?basepath=/home/cdr/domains/cdr2.com/www&x=list&f=/").then(r=>r.json()).then(data=>{
-                app.data = data;
+            
+            fetch("api?x=list&f=/").then(r=>r.json()).then(data=>{
+                app.data = app.files = data;
                 app.renderFiles(data);
             });
             app.viewFiles("/");
@@ -346,7 +348,7 @@
                 $("#viewer").src = evt.target.id + '.html';
             }
             let cur = $(".toolgroup button").querySelector(".selected");
-            cur.classList.remove("selected");
+            if (cur) cur.classList.remove("selected");
             evt.target.classList.add("selected");
         },
         storeConfig(key, val) {

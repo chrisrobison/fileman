@@ -440,6 +440,72 @@ margin-left: 4px;
         }
         #search button:focus-visible {
         }
+        #context {
+            position: absolute;
+            height: 300px;
+            width: 200px;
+            background: #ccc;
+            box-shadow: 2px 2px 2px #0006;
+            margin:0;
+            padding:0;
+            top: 30%;
+            left: 200px;
+
+        }
+        #context li {
+            list-style-type: none;
+            padding: 0 1rem 0 1rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 1.9rem;
+            transition: all 150ms linear;
+            position: relative;
+        }
+        #context li hr {
+            height: 1px;
+            width: 100%;
+            background: #000;
+        }
+        #context li a {
+            font-weight: 300;
+            color: #444;
+            transition: all 200ms linear;
+        }
+        #context li:has(a):hover {
+            background: #37b;
+        }
+        #context li:has(a):hover a {
+            color: #eee;
+        }
+        .context-child {
+            position: absolute;
+            height: 0px;
+            width: 0px;
+            background: #ccc;
+            border: 1px solid #0006;
+            box-shadow: 2px 2px 2px #0006;
+            top: 0px;
+            left: 200px;
+            transition: all 200ms linear;
+            overflow-y: auto;
+            overflow-x: hidden;
+            opacity: 0;
+        }
+        .context-child.open {
+            height: 250px;
+            width: 200px;
+            opacity: 1;
+        }
+        .context-item {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+        }
+        ul.context-child {
+            padding: 0;
+        }
     </style>
     <script src="/crblog/assets/fontawesome-free-6.4.0-web/js/all.min.js"></script>
 </head>
@@ -474,6 +540,26 @@ margin-left: 4px;
     <div id="qv-resize-bottom-left" class="qv-resize qv-resize-corner"></div><div id="qv-resize-bottom" class="qv-resize"></div><div id="qv-resize-bottom-right" class="qv-resize qv-resize-corner"></div>
 </div>
 <div id="search"><input type="text" id="query" name="query" oninput="app.doSearch(this.value)" value=""><button class="query-close" onclick="app.clearSearch();return false;"><i class="fa-solid fa-xmark"></i></button></div>
+<ul id="context">
+    <li style="border-bottom: 1px solid #0009;"><i class="fa-regular fa-file"></i> <span id="context-file"></span></li>
+    <li><a href="#open" onclick="app.doOpen(event);return false"><i class="fa-solid fa-up-right-from-square"></i> Open...</a></li>
+    <li><a href="#view" onclick="app.quickview(event);return false"><i class="fa-solid fa-code"></i> View</a></li>
+    <li><a href="#preview" onclick="app.preview(event);return false"><i class="fa-solid fa-eye"></i> Preview</a></li>
+    <li style="height:0.5rem;padding:0;"><hr></li>
+    <li><div class="context-item"><a href="#copy" onclick="app.copy(event);return false"><i class="fa-solid fa-copy"></i> Copy</a><a href="#copyIndicator" class="indicator" onmouseover="app.contextChild('/', $('#copy-to'))">&gt;</a></div>
+        <ul class="context-child" id="copy-to">
+        </ul>
+    </li>
+    <li><div class="context-item"><a href="#move" onclick="app.move(event);return false"><i class="fa-solid fa-file-import"></i> Move</a><a href="#moveIndicator" class="indicator" onmouseover="app.contextChild('/', $('#move-to'))">&gt;</a></div>
+        <ul class="context-child" id="move-to">
+        </ul>
+    </li>
+    <li><a href="#delete" onclick="app.delete(event);return false"><i class="fa-solid fa-trash"></i> Delete</a></li>
+    <li><a href="#compress" onclick="app.compress(event);return false"><i class="fa-solid fa-file-zipper"></i> Compress...</a></li>
+    <li style="height:0.5rem;padding:0;"><hr></li>
+    <li><a href="#properties" onclick="app.properties(event);return false"><i class="fa-solid fa-rectangle-list"></i> Properties</a></li>
+</ul>
+</div>
 <script>
 const $ = str => document.querySelector(str);
 const $$ = str => document.querySelectorAll(str);
@@ -482,7 +568,8 @@ const $$ = str => document.querySelectorAll(str);
     const app = {
         data: {
             picks: [],
-            files: []
+            files: [],
+            list: {}
         },
         state: {
             currentColumn: 1,
@@ -496,6 +583,7 @@ const $$ = str => document.querySelectorAll(str);
         init() {
             document.addEventListener("click", app.doClick);
             document.addEventListener("keydown", app.doKeyDown);
+            document.addEventListener("mousedown", app.doDown);
             let viewerconfig = app.getConfig("viewer");
             if (viewerconfig) {
                 $("#viewer").style.top = viewerconfig.top +'px';
@@ -513,6 +601,21 @@ const $$ = str => document.querySelectorAll(str);
 
             $$(".drag-handle").forEach(item=> { item.addEventListener("mousedown", app.doDown); });
             $$(".qv-resize").forEach(item=> { item.addEventListener("mousedown", app.doDown); });
+        },
+        contextChild(path, container) {
+            $$(".context-child.open").forEach(item=>item.classList.remove("open"));
+            container.classList.add("open");
+            if (app.data.list[path]) {
+                app.data.list[path].forEach(item=>{
+                    if (item.isdir) {
+                        let el = document.createElement("li");
+                        let cleanfile = item.file.replace(/\W/g, '_');
+                        el.innerHTML = `<div class="context-item"><a href="#${cleanfile}" onclick="app.doAction('${item.filename}');return false">${item.file}</a><a href="#${cleanfile}-indicator" class="indicator" onmouseover="app.contextChild('${item.filename}', $('#context-${cleanfile}'))">&gt;</a></div>
+                            <ul class="context-child" id="context-${cleanfile}"></ul>`;
+                        container.append(el);
+                    }
+                });
+            }
         },
         parseQuery() {
             let query = location.search.replace(/^\?/,'');
@@ -764,8 +867,13 @@ const $$ = str => document.querySelectorAll(str);
             }
  
         },
+        doContext(evt) {
+            
+        },
         doDown(evt) {
-            if (evt.currentTarget.className.includes("drag-handle")) { 
+            if (evt.button === 1) {
+                return app.doContext(evt);
+            } else if (evt.currentTarget.className?.includes("drag-handle")) { 
                 app.state.resizing = true;
                 app.state.resizeX = evt.x;
                 let cols = app.state.cols = evt.target.id.replace(/^drag_/, '').split(/\-/);
@@ -785,7 +893,7 @@ const $$ = str => document.querySelectorAll(str);
                 document.addEventListener("mouseup", app.doUp);
                 evt.preventDefault();
                 return false;
-            } else if (evt.currentTarget.className.includes("qv-resize")) {
+            } else if (evt.currentTarget.className?.includes("qv-resize")) {
                 $("#qv-content").style.pointerEvents = "none";
                 app.state.qvresizing = true;
                 let rect = $("#viewer").getBoundingClientRect()
@@ -798,7 +906,7 @@ const $$ = str => document.querySelectorAll(str);
                 
                 evt.preventDefault();
                 return false;
-            } else if (evt.currentTarget.className.includes("header")) {
+            } else if (evt.currentTarget.className?.includes("header")) {
                 app.state.qvresizing = true;
                 app.state.qvmoving = true;
 
@@ -957,8 +1065,7 @@ const $$ = str => document.querySelectorAll(str);
         getList(path) {
             app.showLoader();
             fetch(`api?x=list&f=${path}`).then(r=>r.json()).then(data=>{
-                app.files = [...data.files];
-                app.files.sort((a,b)=>{ 
+                data.files.sort((a,b)=>{ 
                     if (a.file.toLowerCase() < b.file.toLowerCase()) {
                         return -1;
                     } else if (a.file.toLowerCase() > b.file.toLowerCase()) {
@@ -967,6 +1074,10 @@ const $$ = str => document.querySelectorAll(str);
                         return 0;
                     }
                 });
+                
+                app.data.list[path] = data.files;
+                app.files = [...data.files];
+                
                 app.render(app.files);
                 app.hideLoader();
             });

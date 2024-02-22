@@ -235,7 +235,7 @@ foreach ($files as $file) {
     } else if (file_exists("img/".$ext.".png")) {
         $icon = "img/".$ext.".png";
     } else {
-        $icon = "img/_blank.png";
+        $icon = "img/_blank.svg";
     }
     $item->icon = $icon;
     $show = preg_replace("|{$basedir}/?|", '', $file);

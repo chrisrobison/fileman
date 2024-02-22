@@ -233,7 +233,7 @@ foreach ($files as $file) {
     } else if (file_exists("img/".$ext.".png")) {
         $icon = "img/".$ext.".png";
     } else {
-        $icon = "img/_blank.png";
+        $icon = "img/_blank.svg";
     }
     $item->icon = $icon;
     $show = preg_replace("|{$basedir}/?|", '', $file);
@@ -328,21 +328,21 @@ const $$ = str => document.querySelectorAll(str);
             let sel = $(".selected");
             let focus = $(".focus");
             let tgt = e.target.closest(".file");
+            let prevFocus = $(".focus");
+
             e.preventDefault();
             
             if (tgt) { 
                 $(".focus")?.classList.remove("focus");
                 tgt.classList.add("focus");
             }
-            if (tgt && !sel && !focus) {
-                app.selected.push(e.target.dataset.filename);
+            if (tgt && !sel) {
+                app.state.selected = [tgt.dataset.filename];
                 tgt.classList.add("selected");
-                tgt.classList.add("focus");
-
             } else if (tgt && sel && e.ctrlKey) {
-                app.selected.push(e.target.dataset.filename);
+                // TODO: Add handling for modifier keys (Ctrl=add file; Shift=add all files between last focus and tgt
+                app.state.selected.push(tgt.dataset.filename);
                 tgt.classList.add("selected");
-                tgt.classList.add("focus");
             } else if (tgt && sel && e.shiftKey) {
                 
             }
