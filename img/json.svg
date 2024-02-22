@@ -1,0 +1,41 @@
+<svg viewBox="3.826 2.059 48.103 57.581" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <filter id="blur" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <title>Blur</title>
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.01"></feGaussianBlur>
+    </filter>
+    <filter id="blur2" primitiveUnits="objectBoundingBox" bx:pinned="true">
+      <feGaussianBlur result="gaussian-blur-0" in="none" stdDeviation="0.03"></feGaussianBlur>
+    </filter>
+  </defs>
+  <path style="stroke: rgb(0, 0, 0); fill: rgb(240, 240, 240); stroke-width: 0.5px;" d="M 3.826 2.059 L 4.103 56.64 L 48.929 56.64 L 48.929 10.712 L 41.229 2.133 L 3.826 2.059 Z">
+    <title>Paper</title>
+  </path>
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0px; fill: rgba(0, 0, 0, 0.365); transform-box: fill-box; transform-origin: 50% 50%;" d="M 41.514 10.711 L 41.535 18.115 L 48.914 18.093 L 41.514 10.711 Z" transform="matrix(-1, 0, 0, -1, 0, 0.000001)">
+    <title>Fold Shadow</title>
+  </path>
+  <text style="font-family: 'Lucida Console'; font-size: 2px; white-space: pre; filter: url('#blur');" transform="matrix(0.934311, 0, 0, 1, -1.740377, -10.999999)" x="11.081000328063965" y="16.78700065612793">[<tspan x="11.081000328063965" dy="1em">​</tspan>  {<tspan x="11.081000328063965" dy="1em">​</tspan>   "ID": 1,<tspan x="11.081000328063965" dy="1em">​</tspan>   "FirstName": "Christopher",<tspan x="11.081000328063965" dy="1em">​</tspan>   "LastName": "Robison",<tspan x="11.081000328063965" dy="1em">​</tspan>   "Email": "cdr@cdr2.com",<tspan x="11.081000328063965" dy="1em">​</tspan>   "City": "San Francisco",<tspan x="11.081000328063965" dy="1em">​</tspan>   "Website": "https://cdr2.com"<tspan x="11.081000328063965" dy="1em">​</tspan>  },  <tspan x="11.081000328063965" dy="1em">​</tspan>  {<tspan x="11.081000328063965" dy="1em">​</tspan>   "ID": 2,<tspan x="11.081000328063965" dy="1em">​</tspan>   "FirstName": "Johnny",<tspan x="11.081000328063965" dy="1em">​</tspan>   "LastName": "Appleseed",<tspan x="11.081000328063965" dy="1em">​</tspan>   "Email": "johnny@apple.com",<tspan x="11.081000328063965" dy="1em">​</tspan>   "City": "Cupertino",<tspan x="11.081000328063965" dy="1em">​</tspan>   "Website": "apple.com"<tspan x="11.081000328063965" dy="1em">​</tspan>  },<tspan x="11.081000328063965" dy="1em">​</tspan>  {<tspan x="11.081000328063965" dy="1em">​</tspan>   "ID": 2,<tspan x="11.081000328063965" dy="1em">​</tspan>   "FirstName": "Johnny",<tspan x="11.081000328063965" dy="1em">​</tspan>   "LastName": "Appleseed",<tspan x="11.081000328063965" dy="1em">​</tspan>   "Email": "johnny@apple.com",<tspan x="11.081000328063965" dy="1em">​</tspan>   "City": "Cupertino",<tspan x="11.081000328063965" dy="1em">​</tspan>   "Website": "apple.com"<tspan x="11.081000328063965" dy="1em">​</tspan>  },<tspan x="11.081000328063965" dy="1em">​</tspan></text>
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0.428; fill: rgb(204, 204, 204);" d="M 41.514 2.099 L 41.535 10.711 L 48.914 10.684 L 41.514 2.099 Z">
+    <title>Fold</title>
+  </path>
+  <g style="">
+    <title>Perforation</title>
+    <line style="stroke-dasharray: 1, 2; stroke-width: 1.224; transform-box: fill-box; transform-origin: 50% 50%; stroke: rgba(0, 0, 0, 0.42);" x1="7.336" y1="55.764" x2="7.003" y2="2.786" transform="matrix(-1, 0, 0, -1, -0.000004, 0.000003)">
+      <title>Perforation Left</title>
+    </line>
+    <line style="stroke-dasharray: 1, 2; stroke: rgba(0, 0, 0, 0.463);" x1="46.927" y1="12.188" x2="46.654" y2="51.353">
+      <title>Perforation Right</title>
+    </line>
+  </g>
+  <text style="fill: rgb(134, 134, 134); font-family: Arial, sans-serif; font-size: 2.8px; font-weight: 900; white-space: pre; visibility: hidden;" x="11.029" y="12.048" filter="url(#blur2)"><title>Title</title>The Crazy Ones</text>
+  <g transform="matrix(1.681603, 0, 0, 1.25714, -35.981885, 4.225275)" style="">
+    <title>Filetype</title>
+    <rect x="36.21" y="33.594" width="16.068" height="10.486" style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgba(0, 0, 0, 0.357);" filter="url(#blur2)">
+      <title>Filetype Shadow</title>
+    </rect>
+    <rect x="29.993" y="32.594" width="21.69" height="10.486" style="stroke: rgba(0, 0, 0, 0.74); stroke-width: 0.272225px; fill: color(display-p3 0.56 0.03 0.34);">
+      <title>Filetype</title>
+    </rect>
+    <text style="fill: rgb(238, 238, 238); font-family: Tahoma; font-size: 9px; white-space: pre;" x="31.873" y="41.079" transform="matrix(0.898426, 0, 0, 1, 2.938465, 0.140721)">JSON</text>
+  </g>
+</svg>

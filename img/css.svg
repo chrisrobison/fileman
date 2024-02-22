@@ -11,10 +11,10 @@
   <path style="stroke: rgb(0, 0, 0); fill: rgb(240, 240, 240); stroke-width: 0.5px;" d="M 3.826 2.059 L 4.103 56.64 L 48.929 56.64 L 48.929 10.712 L 41.229 2.133 L 3.826 2.059 Z">
     <title>Paper</title>
   </path>
-  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0.4px; fill: rgb(204, 204, 204);" d="M 41.758 2.099 L 41.778 9.895 L 48.914 9.871 L 41.758 2.099 Z">
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0.415; fill: rgb(204, 204, 204);" d="M 41.758 2.099 L 41.778 10.484 L 48.914 10.458 L 41.758 2.099 Z">
     <title>Fold</title>
   </path>
-  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0px; fill: rgba(0, 0, 0, 0.365); transform-box: fill-box; transform-origin: 50% 50%;" d="M 41.514 9.895 L 41.535 17.299 L 48.914 17.277 L 41.514 9.895 Z" transform="matrix(-1, 0, 0, -1, 0.000005, -0.000001)">
+  <path style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 0px; fill: rgba(0, 0, 0, 0.365); transform-box: fill-box; transform-origin: 50% 50%;" d="M 41.514 10.484 L 41.535 17.888 L 48.914 17.866 L 41.514 10.484 Z" transform="matrix(-1, 0, 0, -1, -0.000001, 0)">
     <title>Fold Shadow</title>
   </path>
   <g style="visibility: hidden;">
@@ -33,7 +33,7 @@
     <rect x="34.579" y="33.594" width="16.535" height="10.486" style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgba(0, 0, 0, 0.357);" filter="url(#blur2)">
       <title>Filetype Shadow</title>
     </rect>
-    <rect x="32.74" y="32.594" width="19.538" height="10.486" style="stroke: rgb(0, 0, 0); stroke-width: 0.3px;">
+    <rect x="32.74" y="32.594" width="19.538" height="10.486" style="stroke: rgb(0, 0, 0); stroke-width: 0.3px; fill: rgb(28, 127, 151);">
       <title>Filetype</title>
     </rect>
     <text style="fill: rgb(238, 238, 238); font-family: Tahoma; font-size: 9px; white-space: pre;" x="34.873" y="41.079" transform="matrix(0.938013, 0, 0, 1, -0.157277, 0)"> CSS</text>
