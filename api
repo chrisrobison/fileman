@@ -119,6 +119,18 @@ function getInfo($file) {
     return $out;
 }
 
+function hasFolders($folder) {
+    if (is_dir($folder)) {
+        $files = glob($folder."/*");
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 function listFiles($folder) {
     global $basepath;
     global $in;
@@ -168,7 +180,8 @@ function listFiles($folder) {
             if (is_dir($file)) {
                 $out->files[$i]->icon = $folderico;
                 $out->files[$i]->isdir = true;
-            } else if (preg_match("/(png|jpg|gif|svg|jpeg)$/", $out->files[$i]->filename)) { 
+                $out->files[$i]->hasFolders = hasFolders($file);
+            } else if (preg_match("/\.(png|jpg|gif|svg|jpeg)$/", $out->files[$i]->filename)) { 
                 $out->files[$i]->icon = $out->files[$i]->filename;
 
             } else if (file_exists("$basepath/fileman/img/$ext.svg")) {
