@@ -13,7 +13,7 @@ if (isset($in['d'])) {
         $tmpid = uniqid('CDRFM-');
         file_put_contents("/tmp/$tmpid.md", "```{$m[1]}\n".$contents."\n```\n");
         $style = escapeshellarg((array_key_exists("style", $in)) ? $in['style'] : 'breezedark');
-        $results = `pandoc --highlight-style={$style} --standalone --template=html5.tpl -f markdown -t html5 -i /tmp/$tmpid.md`;
+        $results = `pandoc --highlight-style={$style} --standalone --template=lib/html5.tpl -f markdown -t html5 -i /tmp/$tmpid.md`;
         
         print $results; 
        exit; 
@@ -24,6 +24,16 @@ if (isset($in['d'])) {
 
         print "<html><head></head><body style='background:#000;color:#ccc;'><pre style='color:#ccc;'>".json_encode($json, JSON_PRETTY_PRINT)."</pre></body></html>";
         exit;
+    } else if (preg_match("/\.(png|gif|jpg|jpeg|svg|bmp|ico|webm)$/", $dir)) {
+        $dir = preg_replace("|".$basedir."|", '', $dir);
+        print <<<EOT
+<html><head></head><body style='display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;width:100vw;background:#000;color:#ccc;'><img src="$dir" height="90%"></body></html>";
+EOT;
+        exit;
+    } else if (preg_match("/\.pdf$/i", $dir)) {
+        $dir = preg_replace("|".$basedir."|", '', $dir);
+        header("Location: $dir");
+       exit; 
     } else if (is_file($dir)) {
         $prepend = "";
         $mime = trim(`file -b --mime-type {$dir}`);
