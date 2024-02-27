@@ -23,6 +23,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
 
         header {
@@ -207,7 +210,7 @@ background: #fff;
     color:#666;
     text-align:left;
 height: 14rem;
-width: 100%;
+width: calc(100%);
 }
 iframe.preview {
     height: 12rem;
@@ -450,7 +453,8 @@ margin-left: 4px;
             padding:0;
             top: 30%;
             left: 200px;
-
+            transition: all 200ms linear;
+            transform-origin: 0px 0px;
         }
         #context li {
             list-style-type: none;
@@ -493,8 +497,8 @@ margin-left: 4px;
             opacity: 0;
         }
         .context-child.open {
-            height: 250px;
             width: 200px;
+            height: fit-content;
             opacity: 1;
         }
         .context-item {
@@ -505,6 +509,39 @@ margin-left: 4px;
         }
         ul.context-child {
             padding: 0;
+            position: relative;
+            background: #ddd;
+            transform-origin: left center;
+        }
+        .scroll-btn {
+            height: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            cursor: pointer;
+            background: #ccc;
+            visibility: hidden;
+        }
+
+        .scroll-up {
+            top:0px; 
+            border-bottom: 1px solid #0006;
+        }
+
+        .scroll-down {
+            bottom: 0px;
+            border-top: 1px outset #fff;
+
+        }
+        .context-dest {
+            padding: 0 1rem;
+            font-weight: 300;
+            color: #333;
+        }
+        #context {
+            scale: 0;
         }
     </style>
     <script src="/crblog/assets/fontawesome-free-6.4.0-web/js/all.min.js"></script>
@@ -540,17 +577,18 @@ margin-left: 4px;
     <div id="qv-resize-bottom-left" class="qv-resize qv-resize-corner"></div><div id="qv-resize-bottom" class="qv-resize"></div><div id="qv-resize-bottom-right" class="qv-resize qv-resize-corner"></div>
 </div>
 <div id="search"><input type="text" id="query" name="query" oninput="app.doSearch(this.value)" value=""><button class="query-close" onclick="app.clearSearch();return false;"><i class="fa-solid fa-xmark"></i></button></div>
+
 <ul id="context">
     <li style="border-bottom: 1px solid #0009;"><i class="fa-regular fa-file"></i> <span id="context-file"></span></li>
     <li><a href="#open" onclick="app.doOpen(event);return false"><i class="fa-solid fa-up-right-from-square"></i> Open...</a></li>
     <li><a href="#view" onclick="app.quickview(event);return false"><i class="fa-solid fa-code"></i> View</a></li>
     <li><a href="#preview" onclick="app.preview(event);return false"><i class="fa-solid fa-eye"></i> Preview</a></li>
     <li style="height:0.5rem;padding:0;"><hr></li>
-    <li><div class="context-item"><a href="#copy" onclick="app.copy(event);return false"><i class="fa-solid fa-copy"></i> Copy</a><a href="#copyIndicator" class="indicator" onmouseover="app.contextChild('/', $('#copy-to'))">&gt;</a></div>
+    <li><div class="context-item"><a href="#copy" onclick="app.copy(event);return false"><i class="fa-solid fa-copy"></i> Copy</a><a href="#copyIndicator" class="indicator" onmouseover="app.contextChild(event, '/', 'copy-to')">&gt;</a></div>
         <ul class="context-child" id="copy-to">
         </ul>
     </li>
-    <li><div class="context-item"><a href="#move" onclick="app.move(event);return false"><i class="fa-solid fa-file-import"></i> Move</a><a href="#moveIndicator" class="indicator" onmouseover="app.contextChild('/', $('#move-to'))">&gt;</a></div>
+    <li><div class="context-item"><a href="#move" onclick="app.move(event);return false"><i class="fa-solid fa-file-import"></i> Move</a><a href="#moveIndicator" class="indicator" onmouseover="app.contextChild(event, '/', 'move-to')">&gt;</a></div>
         <ul class="context-child" id="move-to">
         </ul>
     </li>
@@ -584,6 +622,7 @@ const $$ = str => document.querySelectorAll(str);
             document.addEventListener("click", app.doClick);
             document.addEventListener("keydown", app.doKeyDown);
             document.addEventListener("mousedown", app.doDown);
+            document.addEventListener("contextmenu", app.doContext);
             let viewerconfig = app.getConfig("viewer");
             if (viewerconfig) {
                 $("#viewer").style.top = viewerconfig.top +'px';
@@ -602,19 +641,128 @@ const $$ = str => document.querySelectorAll(str);
             $$(".drag-handle").forEach(item=> { item.addEventListener("mousedown", app.doDown); });
             $$(".qv-resize").forEach(item=> { item.addEventListener("mousedown", app.doDown); });
         },
-        contextChild(path, container) {
-            $$(".context-child.open").forEach(item=>item.classList.remove("open"));
-            container.classList.add("open");
-            if (app.data.list[path]) {
-                app.data.list[path].forEach(item=>{
+        async getFiles(path) {
+            let response = await fetch(`api?x=list&f=${path}`);
+            let data = await response.json();
+
+            app.data.list[path] = data.files;
+
+            return data;
+        },
+        contextChild(evt, path, container) {
+            //$$(".context-child.open").forEach(item=>item.classList.remove("open"));
+            let tgt = evt.target.closest("li");
+            if (!app.data.list[path]) {
+                app.getFiles(path).then(files=>{
+                    app.renderContextChild(path, files.files, tgt);
+                });
+            } else {
+                app.renderContextChild(path, app.data.list[path], tgt );
+            }
+
+        },
+        hideContextChild(evt, path, container) {
+            let el = $(`#${path.replace(/\W/g, '_')}`);
+            if (el) {
+                el.style.scale = 0;
+            }
+        },
+        renderContextChild(path, files, tgt) {
+            let rect;
+            if (tgt) {
+                rect = tgt.getBoundingClientRect();
+                console.dir(rect);
+            } else {
+                rect = { right: 0, top: 500 };
+            }
+            if (!$(`#${path.replace(/\W/g, '_')}`)) {
+                let container = document.createElement("ul");
+                container.classList.add("open","context-child");
+                
+                container.style.position = "absolute";
+                container.style.top = rect.top - 16 + 'px';
+                container.style.left = rect.right + 'px';
+                container.style.background = "#ddd";
+                container.style.border = "1px solid #0006";
+                container.style.maxHeight = "70vh";
+                container.style.overflow = "hidden";
+                container.style.transition = "all 200ms linear";
+                container.style.scale = 0;
+                container.addEventListener("mouseout", function(evt) {
+
+                });
+                container.id = path.replace(/\W/g, '_');
+
+                let scrollUp = document.createElement('li');
+                scrollUp.classList.add("scroll-btn","scroll-up");
+                scrollUp.addEventListener("mouseover", function(evt) {
+                    container.scrollBy({left: 0, top: -20, behavior: "smooth"});
+                    app.state.interval = setInterval(function() { container.scrollBy({left: 0, top: -20, behavior: "smooth"}); }, 200);
+                });
+                scrollUp.addEventListener("mouseout", function(evt) {
+                    clearInterval(app.state.interval);
+                });
+                scrollUp.innerHTML = "▲";
+                container.append(scrollUp);
+                files.forEach(item=>{
                     if (item.isdir) {
                         let el = document.createElement("li");
+                        
                         let cleanfile = item.file.replace(/\W/g, '_');
-                        el.innerHTML = `<div class="context-item"><a href="#${cleanfile}" onclick="app.doAction('${item.filename}');return false">${item.file}</a><a href="#${cleanfile}-indicator" class="indicator" onmouseover="app.contextChild('${item.filename}', $('#context-${cleanfile}'))">&gt;</a></div>
-                            <ul class="context-child" id="context-${cleanfile}"></ul>`;
+                        let cleanfilename = item.filename.replace(/\W/g, '_');
+                        let indicator = "";
+
+                        if (item.hasFolders) {
+                            el.addEventListener("mouseover", function(evt) {
+                                $$(".context-child.open").forEach(menu=>{
+                                    let re = new RegExp(menu.id);
+
+                                    console.log(`Checking for '${menu.id}' in '${cleanfilename}'`);
+                                    if (cleanfilename.search(menu.id) < 0) {
+                                        console.log(`no match for '${menu.id}' in '${cleanfilename}'`);
+                                        menu.style.scale = "0";
+                                    } else {
+                                        console.log(`Matched!!!! ${menu.id} in ${cleanfilename}`);
+                                    }
+                                });
+                                app.contextChild(evt, item.filename, cleanfile);
+                            });
+                            indicator = `<a href="#${cleanfile}-indicator" class="indicator">&gt;</a>`;
+                        }
+
+                        el.innerHTML = `<div class="context-item context-dest"><a href="#${cleanfile}" onclick="app.doAction('${item.filename}');return false">${item.file}</a>${indicator}</div>`;
                         container.append(el);
                     }
                 });
+                let scrollDown = document.createElement('li');
+                scrollDown.classList.add("scroll-btn","scroll-down");
+                scrollDown.addEventListener("mouseover", function(evt) {
+                    container.scrollBy({left: 0, top: 20, behavior: "smooth"});
+                    app.state.interval = setInterval(function() { container.scrollBy({left: 0, top: 20, behavior: "smooth"}); }, 200);
+                });
+                scrollDown.addEventListener("mouseout", function(evt) {
+                    clearInterval(app.state.interval);
+                });
+                scrollDown.innerHTML = "▼";
+                container.append(scrollDown);
+
+                document.body.append(container);
+                setTimeout(function() {
+                    container.style.scale = 1;
+
+                    setTimeout(function() {
+                        if (container.scrollHeight < container.getBoundingClientRect().height) {
+                            scrollDown.style.visibility = "hidden";
+                            scrollUp.style.visibility = "hidden";
+                            container.style.height = "fit-content";
+                        } else {
+                            scrollUp.style.visibility = "visible";
+                            scrollDown.style.visibility = "visible";
+                        }
+                    }, 300);
+                }, 10);
+            } else {
+                $(`#${path.replace(/\W/g, '_')}`).style.scale = 1;
             }
         },
         parseQuery() {
@@ -667,7 +815,7 @@ const $$ = str => document.querySelectorAll(str);
         clearSearch() {
             $("#query").value = "";
             let foc = $(".focus");
-            $$(`ul#col${colnum} li`).forEach(file => {
+            $$(`ul#col${app.state.searchColNum} li`).forEach(file => {
                 file.style.display = "flex";
             });
         },
@@ -677,14 +825,15 @@ const $$ = str => document.querySelectorAll(str);
 
             if (foc) {
                 let colnum = app.getCol(foc);
-                let re = new RegExp(val, "i");
+                let re = new RegExp(`^${val}`, "i");
+                app.state.searchColNum = colnum;
 
                 $$(`ul#col${colnum} li`).forEach(file => {
                     console.log(`Checking file ${file.dataset.filename} for string '${val}'`);
                     if (!file.dataset.filename.match(re)) {
-                        file.style.display = "none";
+                        //file.style.display = "none";
                     } else {
-                        file.style.display = "flex";
+                        file.scrollIntoFocus();
                     }
                 });
             }
@@ -794,6 +943,8 @@ const $$ = str => document.querySelectorAll(str);
                     foc?.classList.remove("focus");
                     sel?.classList.remove("selected");
                     $("#search").style.display = 'none';
+                    $("#context").style.scale = 0;
+
                     break;
                 case "/":
                     if (foc) {
@@ -867,11 +1018,29 @@ const $$ = str => document.querySelectorAll(str);
             }
  
         },
+        closeContext() {
+            $("#context").style.scale = 0;
+        },
         doContext(evt) {
-            
+            console.log("Doing context");
+            let ctx = $("#context");
+            ctx.style.scale = 0;
+            let tgt = evt.target.closest('li');
+            setTimeout(function() {
+                ctx.style.transitionDuration = "0ms";
+                ctx.style.top = evt.y + 'px';
+                ctx.style.left = evt.x + 'px';
+                setTimeout(function() { $("#context-file").innerHTML = tgt.dataset.filename; ctx.style.transitionDuration = "150ms"; ctx.style.scale = 1; }, 10);
+            }, 150);
+            evt.preventDefault();
+            evt.stopPropagation();
+            return false;
         },
         doDown(evt) {
-            if (evt.button === 1) {
+            console.dir(evt);
+            if (evt.button === 2) {
+                evt.preventDefault();
+                evt.stopPropagation();
                 return app.doContext(evt);
             } else if (evt.currentTarget.className?.includes("drag-handle")) { 
                 app.state.resizing = true;
@@ -1010,8 +1179,8 @@ const $$ = str => document.querySelectorAll(str);
 
                 if (app.state.qvresizing) {
                     app.storeConfig("viewer", app.state.viewer.getBoundingClientRect());
+                    app.state.viewer.style.transitionDuration = "200ms";
                 }
-                app.state.viewer.style.transitionDuration = "200ms";
                 evt.preventDefault();
                 return false;
             }
@@ -1019,7 +1188,7 @@ const $$ = str => document.querySelectorAll(str);
  
         doClick(e) {
             let a = e.target;
-            console.dir(a);
+            app.closeContext();
             if (!app.state.resizing && !app.state.qvresizing && !app.state.quickviewing) {
                 if (e.target.classList.contains("label")) {
                     return true;
@@ -1109,7 +1278,7 @@ const $$ = str => document.querySelectorAll(str);
         showInfo(info) {
             let preview = "";
 
-            if (info.file.match(/\.(html|htm|txt|md|css|cgi|php)$/)) {
+            if (info.file.match(/\.(html|htm|txt|md|css|cgi|php|js|json)$/)) {
                 preview = `<fieldset class="preview"><legend class="label">Preview <a href="${info.filename}" class="external preview-link" target="_blank">open in new window</a></span></legend><span class="value"><iframe src="${info.filename}" class="preview"></iframe></fieldset>`;
             }
 
@@ -1155,7 +1324,7 @@ const $$ = str => document.querySelectorAll(str);
             let out = "";
             data.forEach((item) => {
                 let tpl = `
-<li class='file' data-filename='${item.filename}' data-mimetype='${item.mimetype}' data-isdir='${item.isdir}' data-modified='${app.cleanDate(item.modified)}' data-perms='${item.perms}' data-owner='${item.owner}' data-group='${item.group}'>
+<li class='file' data-filename='${item.filename}' data-file='${item.file}' data-mimetype='${item.mimetype}' data-isdir='${item.isdir}' data-modified='${app.cleanDate(item.modified)}' data-perms='${item.perms}' data-owner='${item.owner}' data-group='${item.group}'>
     <a href='${item.filename}' title='${item.file}' class='filedetail'><div style="background-image:url('${item.icon}');" class='icon'></div></a>
     <a href='${item.filename}' title='${item.file}' class='filedetail'>${item.file}</a>
     <div class="metaicons">
