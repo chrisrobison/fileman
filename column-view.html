@@ -157,8 +157,8 @@ color: #ccc;
     content: " ";
     display: inline-block;
     position: absolute;
-    top:0.25rem;
-    left: 0.25rem;
+    top:2px;
+    left: 2px;
     border: 1px dashed #ff0;
     width: 97%;
     height: 1.4rem;
@@ -579,7 +579,7 @@ margin-left: 4px;
 <div id="search"><input type="text" id="query" name="query" oninput="app.doSearch(this.value)" value=""><button class="query-close" onclick="app.clearSearch();return false;"><i class="fa-solid fa-xmark"></i></button></div>
 
 <ul id="context">
-    <li style="border-bottom: 1px solid #0009;"><i class="fa-regular fa-file"></i> <span id="context-file"></span></li>
+    <li style="border-bottom: 1px solid #0009;"><i id="context-icon-dir" class="fa-regular fa-folder-open"></i> <i id="context-icon-file" class="fa-regular fa-file"></i> <span id="context-file"></span></li>
     <li><a href="#open" onclick="app.doOpen(event);return false"><i class="fa-solid fa-up-right-from-square"></i> Open...</a></li>
     <li><a href="#view" onclick="app.quickview(event);return false"><i class="fa-solid fa-code"></i> View</a></li>
     <li><a href="#preview" onclick="app.preview(event);return false"><i class="fa-solid fa-eye"></i> Preview</a></li>
@@ -827,15 +827,20 @@ const $$ = str => document.querySelectorAll(str);
                 let colnum = app.getCol(foc);
                 let re = new RegExp(`^${val}`, "i");
                 app.state.searchColNum = colnum;
-
-                $$(`ul#col${colnum} li`).forEach(file => {
-                    console.log(`Checking file ${file.dataset.filename} for string '${val}'`);
-                    if (!file.dataset.filename.match(re)) {
+                let filelist = $$(`ul#col${colnum} li`);
+                for (let i=0; i<filelist.length; i++) {
+                    let file = filelist[i];
+                   
+                    console.log(`Checking file ${file.dataset.file} for string '${val}'`);
+                    if (!file.dataset.file.match(re)) {
                         //file.style.display = "none";
                     } else {
-                        file.scrollIntoFocus();
+                        file.scrollIntoView({ behavior: "smooth", block: "start", inline:"start" });
+                        app.selectFile(file);
+                        i=filelist.length;
+                        break;
                     }
-                });
+                }
             }
         },
         getCol(el) {
@@ -845,17 +850,55 @@ const $$ = str => document.querySelectorAll(str);
                 return 1;
             }
         },
+        selectFromPoint(x, y) {
+            let newel = document.elementsFromPoint(x, y);
+
+            newel = newel[0].closest("li.file");
+            
+            console.log("new page down element:");
+            console.dir(newel);
+            app.selectFile(newel);
+            
+            return newel;
+        },
         doKeyDown(e) {
-            let move = 0, sel, foc, li,oops, col, newcol, ul;
+                    console.dir(e);
+            let move = 0, sel, foc, li,oops, col, colnum, newcol, ul, rect;
             foc = $(".focus");
             sel = $(".selected");
-            col = app.getCol(foc);
+            colnum = app.getCol(foc) || 1;
+            col = $(`#col${colnum}`);
+
             if (!foc) {
-                $(`#col${app.state.currentColumn} li:first-child`)?.classList.add("focus");
-                $(`#col${app.state.currentColumn} li:first-child`)?.classList.add("selected");
+                foc = $(`#col${app.state.currentColumn} li:first-child`);
+                foc?.classList.add("focus");
+                foc?.classList.add("selected");
             }
+            rect = foc?.getBoundingClientRect();
 
             switch(e.key) {
+                case "PageUp":
+                    app.closeViewer(); 
+                    if (foc) {
+                        let focrect = foc.getBoundingClientRect();
+                        let colrect = col.getBoundingClientRect();
+
+                        col.scrollBy({left: 0, top: -colrect.height + focrect.height, behavior: "smooth"});
+                        
+                        setTimeout(function() { app.selectFromPoint(focrect.x + 25, focrect.y + 5);}, 500);
+                    }
+                    move = 1;
+                    break;
+                case "PageDown":
+                    app.closeViewer(); 
+                    if (foc) {
+                        let focrect = foc.getBoundingClientRect();
+                        let colrect = col.getBoundingClientRect();
+                        col.scrollBy({left: 0, top: colrect.height - focrect.height, behavior: "smooth"});
+                        setTimeout(function() { app.selectFromPoint(focrect.x + 25, focrect.y + 5);}, 500);
+                   }
+                    move = 1;
+                    break;
                 case "ArrowUp":
                     if ($("#viewer").classList.contains("show")) {
                         $("#viewer").classList.remove("show");
@@ -871,7 +914,6 @@ const $$ = str => document.querySelectorAll(str);
                     move = 1;
                     break;
                 case "ArrowDown":
-                    console.dir(e);
 
                     if ($("#viewer").classList.contains("show")) {
                         $("#viewer").classList.remove("show");
@@ -942,8 +984,12 @@ const $$ = str => document.querySelectorAll(str);
                     $("#viewer").classList.remove("show");
                     foc?.classList.remove("focus");
                     sel?.classList.remove("selected");
-                    $("#search").style.display = 'none';
-                    $("#context").style.scale = 0;
+
+                    if ($("#search").style.display !== "none") {
+                        $("#search").style.display = 'none';
+                    } else {
+                        $("#context").style.scale = 0;
+                    }
 
                     break;
                 case "/":
@@ -1030,7 +1076,19 @@ const $$ = str => document.querySelectorAll(str);
                 ctx.style.transitionDuration = "0ms";
                 ctx.style.top = evt.y + 'px';
                 ctx.style.left = evt.x + 'px';
-                setTimeout(function() { $("#context-file").innerHTML = tgt.dataset.filename; ctx.style.transitionDuration = "150ms"; ctx.style.scale = 1; }, 10);
+                setTimeout(function() { 
+                    if (tgt.dataset.isdir == "true") {
+                        $("#context-icon-file").style.display = "none";
+                        $("#context-icon-dir").style.display = "inline-block";
+                    } else {
+                        $("#context-icon-file").style.display = "inline-block";
+                        $("#context-icon-dir").style.display = "none";
+                    }
+                    $("#context-file").innerHTML = tgt.dataset.filename; 
+                    ctx.style.transitionDuration = "150ms"; 
+                    ctx.style.scale = 1; 
+                }, 10);
+                
             }, 150);
             evt.preventDefault();
             evt.stopPropagation();
