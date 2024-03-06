@@ -5,16 +5,18 @@ if (!isset($in['d'])) $in['d'] = "/";
 if (isset($in['d'])) {
     $dir = preg_replace("|//|", "/", $basedir . '/' . $in['d']);
     $globpath = preg_replace("|//|", "/", $dir . '/*');
-
+    
     if (is_dir($dir)) {
         $files = glob($globpath);
     } else if (preg_match("/\.(html|js|css|php)$/", $dir, $m)) {
         $contents = file_get_contents($dir);
         $tmpid = uniqid('CDRFM-');
-        file_put_contents("/tmp/$tmpid.md", "```{$m[1]}\n".$contents."\n```\n");
-        $style = escapeshellarg((array_key_exists("style", $in)) ? $in['style'] : 'breezedark');
-        $results = `pandoc --highlight-style={$style} --standalone --template=lib/html5.tpl -f markdown -t html5 -i /tmp/$tmpid.md`;
-        
+
+        file_put_contents("tmp/$tmpid.md", "```{$m[1]}\n".$contents."\n```\n");
+        $style = escapeshellarg((array_key_exists("style", $in)) ? $in['style'] : 'zenburn');
+
+        $cmd = "/usr/bin/pandoc --highlight-style={$style} --standalone --template=lib/html5.tpl -f markdown -t html5 -i tmp/$tmpid.md";
+        $results = `$cmd`;
         print $results; 
        exit; 
     } else if (preg_match("/\.json$/", $dir)) {

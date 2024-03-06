@@ -292,6 +292,7 @@ margin-left: 4px;
 #viewer-frame {
     height:95%;
     width: 100%;
+    background: #fff;
 }
                 .header {
                     background-color: #333;
@@ -928,7 +929,7 @@ const $$ = str => document.querySelectorAll(str);
                     break;
                 case "ArrowLeft":
                     
-                    newcol = col - 1;
+                    newcol = colnum - 1;
                     
                     ul = $(`#col${newcol}`);
                     
@@ -936,21 +937,21 @@ const $$ = str => document.querySelectorAll(str);
                         li = ul.querySelector(".selectedParent");
                         app.state.currentColumn = newcol;
 
-                        if ($(`#col${col + 1}`)) {
-                            $(`#col${col + 1}`).innerHTML = "";
+                        if ($(`#col${colnum + 1}`)) {
+                            $(`#col${colnum + 1}`).innerHTML = "";
                         }
                         app.selectFile(li, e.shiftKey, e.ctrlKey);
                     }
-                    $(`#col${app.state.current}`).scrollIntoViewIfNeeded({behavior: "smooth", block: "nearest" });
+                    $(`#col${newcol}`).scrollIntoViewIfNeeded({behavior: "smooth", block: "nearest" });
                     e.preventDefault();
                     e.stopPropagation();
                     break;
                 case "ArrowRight":
 
-                    li = $(`#col${col + 1} > li:first-child`);
+                    li = $(`#col${colnum + 1} > li:first-child`);
                     
                     if (li) {
-                        app.state.currentColumn = col + 1;
+                        app.state.currentColumn = colnum + 1;
                         foc.classList.add("selectedParent");
                         app.selectFile(li);
                     } else {
