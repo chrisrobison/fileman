@@ -40,7 +40,7 @@ switch ($in['x']) {
 }
 
 header("Content-Type: application/javascript");
-print json_encode($out, JSON_UNESCAPED_SLASHES);
+print json_encode($out);
 
 function listSites($path="/home/cdr/domains/") {
     if (!preg_match("/\/$/", $path)) $path .= "/";
@@ -154,8 +154,8 @@ function listFiles($folder) {
         $files = glob($usepath."/*");
         $out->files = array();
         for ($i=0; $i<count($files); $i++) {
+            
             $file = $files[$i];
-
             $out->files[$i] = new stdClass();
             $out->files[$i]->filename = preg_replace("/\/\//", "/", preg_replace("|$basepath|", '', $files[$i]));
             $out->files[$i]->file = preg_replace("|.+/|", '', $files[$i]);
@@ -233,7 +233,6 @@ function getFolderSize($path) {
     
     $out = new stdClass();
     $out->size = $p[0];
-    print_r($out);
     return $out;
 }
 

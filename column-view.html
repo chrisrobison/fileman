@@ -9,9 +9,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/crblog/assets/fontawesome-free-6.4.0-web/css/all.min.css" />
     <style>
-        html {
+        :root {
             --resizeChromeSize: 6px;
             --resizeChromeColor: #9990;
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --success-color: #059669;
+            --danger-color: #dc2626;
+            --card-bg: white;
+            --hover-bg: #f3f4f6;
+            --modal-overlay: rgba(0, 0, 0, 0.5);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --bg-secondary-color: #ccc;
+        }
+        [data-theme="dark"] {
+            /* Dark theme variables */
+            --primary-color: #3b82f6;
+            --secondary-color: #60a5fa;
+            --bg-color: #111827;
+            --text-color: #e5e7eb;
+            --border-color: #374151;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --card-bg: #1f2937;
+            --hover-bg: #374151;
+            --modal-overlay: rgba(0, 0, 0, 0.7);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --bg-secondary-color: #666;
         }
         * { box-sizing: border-box; }
         body {
@@ -31,7 +58,7 @@
         header {
             height: 0;
             font-size: 22px;
-            background-color: #ccc;
+            background-color: var(--bg-color);
             width:100%;
             display: none;
         }
@@ -42,7 +69,7 @@
             align-items: center;
             justify-content: center;
             flex-wrap:wrap;
-            background: #ccc;
+            background: var(--bg-color);
         }
 
         footer {
@@ -60,7 +87,7 @@
             padding: 0;
         }
         a {
-            color: #000;
+            color: var(--text-color);
             text-decoration: none;
         }
         .file {
@@ -88,7 +115,7 @@
         .fileinfo {
             align-items: center;
 white-space: nowrap;
-background: #fff;
+background: var(--bg-color);
 border-radius:1rem;
 padding: 1rem;
 
@@ -139,7 +166,7 @@ padding: 1rem;
     color: #ccc;
     font-size: 0.7rem;
     right: 0.25rem;
-transition: all 200ms linear;
+transition: all 100ms linear;
 opacity: 0;
 }
 .file:hover .metaicons {
@@ -174,20 +201,20 @@ height: 2rem;
 #scroller {
     width: 100vw;
     height: 100vh;
-    border: 2px inset;
-    background: #ccc;
+    border:0; 
+    background: var(--bg-secondary-color);
     overflow-y: hidden;
-    overflow-x: scroll;
+    overflow-x: auto;
     display: flex;
     flex-direction: row;
 
 }
 .column {
     width: 18rem; 
-    border: 2px inset;
+    border: 2px solid var(--border-color);
     margin: 0 0;
     padding: 0.25rem;
-    background: #ddd;
+    background: var(--bg-color);
     overflow:auto;
     flex: 10 0 auto;
     position: relative;
@@ -196,7 +223,7 @@ height: 2rem;
     width: 0.35rem;
     height: 100vh;
     display: flex;
-    border-left: 1px solid #99f;
+    border-left: 1px solid var(--border-color);
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -206,7 +233,7 @@ height: 2rem;
 margin-left: 0.25rem;
 }
 .preview {
-background: #fff;
+background: #111;
     color:#666;
     text-align:left;
 height: 14rem;
@@ -217,7 +244,7 @@ iframe.preview {
 }
 
 .preview-link {
-    color:#009;
+    color:var(--primary-color);
 	font-size:0.8em;
 	text-decoration:underline;
 	display:inline-flex;
@@ -226,21 +253,22 @@ iframe.preview {
 	flex-direction:row;
 }
 .external:after {
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3C!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--%3E%3Cpath d='M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z'/%3E%3C/svg%3E");
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 512 512'%3E%3C!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--%3E%3Cpath d='M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z'/%3E%3C/svg%3E");
 background-size: contain;
 width:0.7rem;
 height:0.7rem;
 display: inline-block;
 content: " ";
 margin-left: 4px;
+    color: var(--primary-color);
 }
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 120px;
   height: 22px;
   border-radius: 40px;
-  color: #514b82;
-  border: 2px solid;
+  color: var(--text-color);
+  border: 2px solid var(--text-color);
   position: absolute;
   bottom: 3vh;
   left: 7vw;
@@ -272,9 +300,9 @@ margin-left: 4px;
     top: 10vh;
     left: 20vh;
     width: 800px;
-    background-color: #9990;
+    background-color: var(--bg-color);
     overflow: hidden;
-    transition: all 200ms linear;
+    transition: all 100ms linear;
     scale: 0;
     z-index: 9999;
     display: inline-grid;
@@ -454,7 +482,7 @@ margin-left: 4px;
             padding:0;
             top: 30%;
             left: 200px;
-            transition: all 200ms linear;
+            transition: all 100ms linear;
             transform-origin: 0px 0px;
         }
         #context li {
@@ -475,7 +503,7 @@ margin-left: 4px;
         #context li a {
             font-weight: 300;
             color: #444;
-            transition: all 200ms linear;
+            transition: all 100ms linear;
         }
         #context li:has(a):hover {
             background: #37b;
@@ -492,7 +520,7 @@ margin-left: 4px;
             box-shadow: 2px 2px 2px #0006;
             top: 0px;
             left: 200px;
-            transition: all 200ms linear;
+            transition: all 100ms linear;
             overflow-y: auto;
             overflow-x: hidden;
             opacity: 0;
@@ -543,6 +571,26 @@ margin-left: 4px;
         }
         #context {
             scale: 0;
+        }
+        li:nth-child(2n) {
+            /* background-color: var(--card-bg); */
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+                --primary-color: #3b82f6;
+                --secondary-color: #60a5fa;
+                --bg-color: #333;
+                --text-color: #e5e7eb;
+                --border-color: #374151;
+                --success-color: #10b981;
+                --danger-color: #ef4444;
+                --card-bg: #2c2c2c;
+                --hover-bg: #374151;
+                --modal-overlay: rgba(0, 0, 0, 0.7);
+                --shadow-color: rgba(0, 0, 0, 0.3);
+                --bg-secondary-color: #666;
+            }
         }
     </style>
     <script src="/crblog/assets/fontawesome-free-6.4.0-web/js/all.min.js"></script>
@@ -617,7 +665,8 @@ const $$ = str => document.querySelectorAll(str);
             column: 1,
             loaded: false,
             resizing: false,
-            basepath: "/home/cdr/domains/cdr2.com/www"
+            basepath: "/home/cdr/domains/cdr2.com/www",
+            baseurl: "https://cdr2.com"
         },
         init() {
             document.addEventListener("click", app.doClick);
@@ -649,6 +698,12 @@ const $$ = str => document.querySelectorAll(str);
             app.data.list[path] = data.files;
 
             return data;
+        },
+        doOpen(e) {
+            let file = app.state.currentContext.dataset.filename;
+            let url = app.state.baseurl + file;
+
+            window.open(url, '_blank');
         },
         contextChild(evt, path, container) {
             //$$(".context-child.open").forEach(item=>item.classList.remove("open"));
@@ -687,7 +742,7 @@ const $$ = str => document.querySelectorAll(str);
                 container.style.border = "1px solid #0006";
                 container.style.maxHeight = "70vh";
                 container.style.overflow = "hidden";
-                container.style.transition = "all 200ms linear";
+                container.style.transition = "all 100ms linear";
                 container.style.scale = 0;
                 container.addEventListener("mouseout", function(evt) {
 
@@ -976,6 +1031,7 @@ const $$ = str => document.querySelectorAll(str);
                     if ($("#viewer").classList.contains("show")) {
                         $("#viewer").classList.remove("show");
                         app.hideOverlay();
+                        app.state.quickviewing = false;
                     } else if (foc && (foc.dataset.isdir!='1') && (foc.dataset.isdir!='true')) {
                         app.quickview(foc.dataset.filename);
                     }
@@ -1073,6 +1129,7 @@ const $$ = str => document.querySelectorAll(str);
             let ctx = $("#context");
             ctx.style.scale = 0;
             let tgt = evt.target.closest('li');
+            app.state.currentContext = tgt;
             setTimeout(function() {
                 ctx.style.transitionDuration = "0ms";
                 ctx.style.top = evt.y + 'px';
@@ -1238,7 +1295,7 @@ const $$ = str => document.querySelectorAll(str);
 
                 if (app.state.qvresizing) {
                     app.storeConfig("viewer", app.state.viewer.getBoundingClientRect());
-                    app.state.viewer.style.transitionDuration = "200ms";
+                    app.state.viewer.style.transitionDuration = "100ms";
                 }
                 evt.preventDefault();
                 return false;
@@ -1255,6 +1312,7 @@ const $$ = str => document.querySelectorAll(str);
                 if (e.target.classList.contains("external")) {
                     return true;
                 }
+                e.stopPropagation();
                 e.preventDefault();
                 let sel = $(".selected");
                 let focus = $(".focus");

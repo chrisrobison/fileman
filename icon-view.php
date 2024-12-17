@@ -14,10 +14,15 @@ if (isset($in['d'])) {
     } else if (is_file($basedir.$in['d'])) {
         $prepend = "";
         $mime = mime_content_type($basedir.$in['d']);
-        if ($mime == "text/html") {
+        if (preg_match("/\.md$/", $in['d'])) {
+            $html = `pandoc --standalone --self-contained -f markdown -t html5 {$basedir}{$in['d']}`;
+            header("Content-Type: text/html");
+            print $html;
+            exit;
+        } else if ($mime == "text/html") {
             $url = "https://".$_SERVER['SERVER_NAME'].'/'.$in['d'];
             $prepend = "<base href='{$url}'>\n";
-        }
+        } 
         $x = file_get_contents($basedir.$in['d']);
         header("Content-Type: " .  $mime);
         print $prepend .$x;

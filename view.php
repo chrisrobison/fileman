@@ -8,17 +8,21 @@ if (isset($in['d'])) {
     
     if (is_dir($dir)) {
         $files = glob($globpath);
-    } else if (preg_match("/\.(html|js|css|php)$/", $dir, $m)) {
+    } else if (preg_match("/\.(md|css|js)$/", $dir, $m)) {
         $contents = file_get_contents($dir);
         $tmpid = uniqid('CDRFM-');
 
-        file_put_contents("tmp/$tmpid.md", "```{$m[1]}\n".$contents."\n```\n");
+        $new = "```{$m[1]}\n".$contents."\n```\n";
+        file_put_contents("/tmp/$tmpid.md", $new);
         $style = escapeshellarg((array_key_exists("style", $in)) ? $in['style'] : 'zenburn');
 
-        $cmd = "/usr/bin/pandoc --highlight-style={$style} --standalone --template=lib/html5.tpl -f markdown -t html5 -i tmp/$tmpid.md";
+        $cmd = "/usr/bin/pandoc --highlight-style={$style} --standalone --template=lib/html5.tpl -f markdown -t html5 -i /tmp/$tmpid.md";
         $results = `$cmd`;
         print $results; 
        exit; 
+    } else if (preg_match("/\.(html|php|js)$/", $dir, $m)) {
+        header("Location: {$in['d']}");
+        exit;
     } else if (preg_match("/\.json$/", $dir)) {
         $contents = file_get_contents($dir);
         header("Content-Type: text/html");
@@ -26,13 +30,24 @@ if (isset($in['d'])) {
 
         print "<html><head></head><body style='background:#000;color:#ccc;'><pre style='color:#ccc;'>".json_encode($json, JSON_PRETTY_PRINT)."</pre></body></html>";
         exit;
-    } else if (preg_match("/\.(png|gif|jpg|jpeg|svg|bmp|ico|webm)$/", $dir)) {
-        $dir = preg_replace("|".$basedir."|", '', $dir);
-        print <<<EOT
-<html><head></head><body style='display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;width:100vw;background:#000;color:#ccc;'><img src="$dir" height="90%"></body></html>";
-EOT;
+    } else if (preg_match("/\.(png|gif|jpg|jpeg|svg|bmp|ico|webm)$/", $dir, $m)) {
+        $type = $m[1];
+        if ($type === "svg") {
+            $type = "svg+xml";
+        } 
+        if ($type === "jpg") {
+            $type = "jpeg";
+        }
+        $contents = file_get_contents($dir);
+        header("Content-Type: image/$type");
+        print $contents;
+        //$dir = preg_replace("|".$basedir."|", '', $dir);
+        //print <<<EOT
+//  <html><head></head><body style='display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;width:100vw;background:#000;color:#ccc;'><img src="$dir" height="90%"></body></html>";
+//EOT;
         exit;
-    } else if (preg_match("/\.pdf$/i", $dir)) {
+    }
+    else if (preg_match("/\.pdf$/i", $dir)) {
         $dir = preg_replace("|".$basedir."|", '', $dir);
         header("Location: $dir");
        exit; 
